@@ -27,12 +27,10 @@ export const getUser = async (request, response) => {
         );
         if (result.rows[0] && result.rows[0].password === password) {
             request.session.user = result.rows[0];
-            return response
-                .status(201)
-                .send({
-                    msg: "correct credential",
-                    user: request.session.user,
-                });
+            return response.status(201).send({
+                msg: "correct credential",
+                user: request.session.user,
+            });
         } else {
             return response.status(400).send({ msg: "invalid credential" });
         }
@@ -40,4 +38,12 @@ export const getUser = async (request, response) => {
         console.error(error);
         return response.send({ msg: error });
     }
+};
+
+export const getTransation = async (tin) => {
+    const result = await pool.query(
+        `SELECT * from Transactions WHERE TIN = $1;`,
+        [tin]
+    );
+    return result.rows;
 };

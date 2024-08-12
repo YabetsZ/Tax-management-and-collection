@@ -2,6 +2,7 @@ import express from "express";
 import session from "express-session";
 
 import { getAdmins, getUser } from "./queries.js";
+import { router } from "../routes/users.js";
 
 const app = express();
 app.use(express.json());
@@ -15,6 +16,7 @@ app.use(
         },
     })
 );
+app.use("/api/user",router)
 
 app.get("/", getAdmins); // this is trial api endpoint
 app.post("/api/user", getUser);
