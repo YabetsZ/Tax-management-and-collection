@@ -1,7 +1,7 @@
 import pg from "pg";
 const { Pool } = pg;
 
-const createConnectionPool = async () => {
+const pool = await (async () => {
     // Create a connection pool
     const pool = new Pool({
         host: "localhost",
@@ -11,6 +11,5 @@ const createConnectionPool = async () => {
         password: "root",
     });
     return pool;
-};
-
-export default createConnectionPool;
+})();
+export default pool;
