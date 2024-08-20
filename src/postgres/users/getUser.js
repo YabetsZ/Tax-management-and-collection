@@ -1,13 +1,20 @@
 import pool from "../createConnection.js";
 
-// FIXME: YOU KNOW
 export const getUserByTin = async (tin) => {
     try {
-        const result = await pool.query(
-            `SELECT * from "Users" WHERE "tin" = $1;`,
+        let resultTin = await pool.query(
+            `SELECT * from "Tin" WHERE "tin" = $1;`,
             [tin]
         );
-        return result;
+        const resultUser = await pool.query(
+            `SELECT * from "Users" WHERE "id" = $1;`,
+            [resultTin.rows[0].id]
+        );
+        return {
+            tin: resultTin.rows[0].tin,
+            password: resultTin.rows[0].password,
+            ...resultUser.rows[0],
+        };
     } catch (err) {
         console.error("error from getUser", err);
         // return response.send({ msg: err });

@@ -1,4 +1,8 @@
 import express, { Router } from "express";
+import { checkSchema, validationResult } from "express-validator";
+import passport from "passport";
+import { payerLogin } from "../utils/LoginValidator.js";
+import { check2fa } from "../postgres/users/check2fa.js";
 
 // import { getUser } from "../postgres/users/getUser.js";
 
@@ -7,26 +11,22 @@ const router = Router();
 // METHOD: USER LOGIN
 
 // app.get("/", getAdmins); // this is trial api endpoint
-router.post("/api/user", async (request, response) => {
-    const {
-        body: { tin, password },
-    } = request;
-    // console.log(request.sessionID);
-    try {
-        const result = await getUser(tin);
-        if (result.rows[0] && result.rows[0].password === password) {
-            request.session.user = result.rows[0];
-            return response.status(201).send({
-                msg: "correct credential",
-                user: request.session.user,
-            });
-        } else {
-            return response.status(400).send({ msg: "invalid credential" });
-        }
-    } catch (err) {
-        return response.status(500).send({ msg: err });
+router.post(
+    "/api/user",
+    checkSchema(payerLogin),
+    passport.authenticate("taxPayerLocal"),
+    async (request, response) => {
+        const result = validationResult(request);
+        if (!result.isEmpty()) return response.status(400).send(result.array());
+        if (!(await check2fa(request.user.tin)))
+            return response
+                .status(202)
+                .send({ message: "successfully logged in", "2fa": "false" });
+        return response
+            .status(202)
+            .send({ message: "successfully logged in", "2fa": "true" });
     }
-});
+);
 
 // export const getTransation = async (tin) => {
 //     const result = await pool.query(

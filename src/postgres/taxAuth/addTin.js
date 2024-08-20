@@ -23,7 +23,7 @@ export const addTin = async (data) => {
 
         console.log("generated pass", generated_pass);
         await pool.query(
-            `INSERT INTO "Tin" ("tin","userid", "password")
+            `INSERT INTO "Tin" ("tin","id", "password")
             VALUES ($1, $2, $3);`,
             [generated_tin, user_id, hashed_generated_pass]
         );

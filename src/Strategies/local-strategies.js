@@ -21,7 +21,7 @@ passport.deserializeUser(async (passed, done) => {
         let findUser;
         console.log("hey from deserialize", passed);
         if (passed.type === "tax payer") {
-            findUser = await getUserByTin(tin);
+            findUser = await getUserByTin(passed.id);
         } else if (passed.type === "tax authority") {
             findUser = await getAuthById(passed.id);
         } else if (passed.type.trim().toLowerCase().endsWith("admin")) {
@@ -58,9 +58,9 @@ passport.use(
         { usernameField: "tin", passwordField: "password" },
         async (tin, password, done) => {
             try {
-                const result = await getUserByTin(tin);
-                const payer = result.rows[0];
-                if (!payer) throw new Error("Email doesn't exist");
+                const payer = await getUserByTin(tin);
+                if (!payer) throw new Error("user doesn't exist");
+                console.log(payer);
                 if (!(await comparePassword(password, payer.password)))
                     throw new Error("Invalid credential");
                 done(null, payer);

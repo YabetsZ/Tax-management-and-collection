@@ -16,7 +16,7 @@ app.use(
         saveUninitialized: false,
         resave: false,
         cookie: {
-            maxAge: 1000 * 60 * 2,
+            maxAge: 1000 * 60 * 10,
         },
         store: new pgSession({
             pool: pool,
