@@ -16,8 +16,7 @@ export const addAdmin = async (data) => {
                 data.profile_picture,
             ]
         );
-    } catch (err) {
-        console.error("Error inserting data into Users table:", err);
-        throw new Error(err);
+    } catch (error) {
+        throw error;
     }
 };

@@ -60,7 +60,6 @@ passport.use(
             try {
                 const payer = await getUserByTin(tin);
                 if (!payer) throw new Error("user doesn't exist");
-                console.log(payer);
                 if (!(await comparePassword(password, payer.password)))
                     throw new Error("Invalid credential");
                 done(null, payer);

@@ -15,6 +15,14 @@ export const newUserValidator = {
             errorMessage: "name should be a string",
         },
     },
+    address: {
+        notEmpty: {
+            errorMessage: "address is required!",
+        },
+        isString: {
+            errorMessage: "address should be a string",
+        },
+    },
     email: {
         notEmpty: {
             errorMessage: "name is required!",

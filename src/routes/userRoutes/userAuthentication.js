@@ -1,11 +1,12 @@
 import express, { Router } from "express";
 import { checkSchema, validationResult } from "express-validator";
 import passport from "passport";
-import { payerLogin } from "../utils/LoginValidator.js";
-import { check2fa } from "../postgres/users/check2fa.js";
+import { payerLogin } from "../../utils/LoginValidator.js";
+import { check2fa } from "../../postgres/users/check2fa.js";
+import { preventAnotherSession } from "../../utils/middlewares.js";
 
 // import { getUser } from "../postgres/users/getUser.js";
-
+// TODO: CHANGING PASSWORD
 const router = Router();
 
 // METHOD: USER LOGIN
@@ -14,6 +15,7 @@ const router = Router();
 router.post(
     "/api/user",
     checkSchema(payerLogin),
+    preventAnotherSession,
     passport.authenticate("taxPayerLocal"),
     async (request, response) => {
         const result = validationResult(request);
@@ -28,14 +30,6 @@ router.post(
     }
 );
 
-// export const getTransation = async (tin) => {
-//     const result = await pool.query(
-//         `SELECT * from "Transactions" WHERE "user_id" = $1;`,
-//         [tin]
-//     );
-//     return result.rows;
-// };
-
 // METHOD: NOTIFICATION
 router
     .get("/api/user/:tin/notification", (request, response) => {
@@ -48,23 +42,5 @@ router
         response.send(`hello welcom come ${tin}`);
     })
     .post((req, res) => {});
-
-// // METHOD:
-// router
-//     .get("/api/user/:tin/transaction", (request, response) => {
-//         const { tin } = request.params;
-//         const user = request.session.user;
-//         if (!user || user.user_id !== +tin)
-//             return response
-//                 .status(401)
-//                 .send({ msg: "Not authenticated!", user: user });
-//         try {
-//             const transactions = getTransation(tin);
-//             response.send(transactions);
-//         } catch (error) {
-//             response.send({ message: error });
-//         }
-//     })
-//     .post((req, res) => {});
 
 export default router;

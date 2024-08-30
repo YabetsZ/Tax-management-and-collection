@@ -8,12 +8,14 @@ import { addAuthority } from "../postgres/admins/addAuthority.js";
 import { adminLogin } from "../utils/LoginValidator.js";
 import { newAdminValidator } from "../utils/newAdminValidator.js";
 import { addAdmin } from "../postgres/admins/addAdmin.js";
+import { preventAnotherSession } from "../utils/middlewares.js";
 
 const router = Router();
 
 // METHOD: ADMIN LOGIN
 router.post(
     "/api/admin",
+    preventAnotherSession,
     checkSchema(adminLogin),
     passport.authenticate("adminLocal"),
     async (request, response) => {
@@ -33,7 +35,6 @@ router.put(
             request.session.passport.user.type !== "super admin"
         )
             return response.sendStatus(401);
-        console.log(request.user);
         const result = validationResult(request);
         if (!result.isEmpty()) return response.status(400).send(result.array());
 
@@ -63,7 +64,6 @@ router.put(
 
         if (!result.isEmpty()) return response.status(400).send(result.array());
         const data = matchedData(request);
-        console.log(data.ssn);
         try {
             //hash the password
             data.password = await hashPassword(data.password);

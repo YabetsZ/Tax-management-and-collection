@@ -9,7 +9,7 @@ export const newAdminValidator = {
     },
     name: {
         notEmpty: {
-            errorMessage: "name is required!",
+            errorMessage: "name is require",
         },
         isString: {
             errorMessage: "name should be a string",
@@ -17,18 +17,18 @@ export const newAdminValidator = {
     },
     admin_type: {
         notEmpty: {
-            errorMessage: "name is required!",
+            errorMessage: "admin_type is required!",
         },
         isString: {
-            errorMessage: "name should be a string",
+            errorMessage: "admin_type should be a string",
         },
     },
     email: {
         notEmpty: {
-            errorMessage: "name is required!",
+            errorMessage: "email is required!",
         },
         isEmail: {
-            errorMessage: "name should be an email",
+            errorMessage: "email should be type email",
         },
     },
     password: {

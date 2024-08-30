@@ -18,9 +18,7 @@ export const getSecrete = async (tin) => {
             `SELECT * FROM "Tin" WHERE "tin" = $1;`,
             [tin]
         );
-        console.log(result.rows[0].secret);
         const secret = result.rows[0].secret.base32;
-        console.log(secret);
         return secret;
     } catch (error) {
         throw error;

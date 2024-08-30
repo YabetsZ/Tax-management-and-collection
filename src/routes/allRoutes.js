@@ -1,7 +1,8 @@
 import { Router } from "express";
 import speakeasy from "speakeasy";
 
-import routesForUsers from "./users.js";
+import routesForUsers from "./userRoutes/userAuthentication.js";
+import routesForTransactions from "./userRoutes/transaction.js";
 import routesForAdmins from "./admins.js";
 import routesForAuthority from "./taxAuthority.js";
 import { addSecret, getSecrete } from "../postgres/2faSecret.js";
@@ -11,6 +12,8 @@ const router = Router();
 router.use(routesForUsers);
 router.use(routesForAdmins);
 router.use(routesForAuthority);
+router.use(routesForTransactions);
+
 router.post("/api/logout", (request, response) => {
     if (!request.user) return response.sendStatus(401);
     try {
@@ -32,7 +35,6 @@ router.post("/api/register", async (request, response) => {
     try {
         const temp_secret = speakeasy.generateSecret();
         request.session.temp_secret = temp_secret;
-        console.log(request.session.temp_secret);
         if (request.session.passport.user.type === "tax payer")
             return response.status(200).send({
                 id: request.user.tin,
@@ -49,7 +51,6 @@ router.post("/api/register", async (request, response) => {
 
 // ALTERNATE: Here the "tin" is identified by "id" for tax payer to be more generic
 router.post("/api/verify", async (request, response) => {
-    console.log(request.session.temp_secret);
     if (!request.user || !request.session.temp_secret)
         return response.sendStatus(400);
     const {

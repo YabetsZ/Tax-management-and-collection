@@ -7,19 +7,19 @@ import { addNewUser } from "../postgres/taxAuth/addNewUser.js";
 import { newTIN } from "../utils/newTinValidator.js";
 import { addTin } from "../postgres/taxAuth/addTin.js";
 import { authLogin } from "../utils/LoginValidator.js";
+import { preventAnotherSession } from "../utils/middlewares.js";
 
 const router = Router();
 
 // METHOD: authenticate authority
 router.post(
     "/api/auth",
+    preventAnotherSession,
     checkSchema(authLogin),
     passport.authenticate("taxAuthLocal"),
     (request, response) => {
         const result = validationResult(request);
         if (!result.isEmpty()) return response.status.send(result.array());
-        console.log(request.session);
-        console.log(request.user);
         return response.sendStatus(200);
     }
 );
@@ -30,7 +30,12 @@ router.put(
     checkSchema(newUserValidator),
     async (request, response) => {
         // recieved data: data.ssn, data.name, data.email, data.phone, data.city, data.profile_picture
-        if (!request.user) return response.sendStatus(401);
+        console.log(request.session.passport.user.type);
+        if (
+            !request.user ||
+            request.session.passport.user.type !== "tax authority"
+        )
+            return response.sendStatus(401);
         const result = validationResult(request);
         if (!result.isEmpty())
             return response.status(401).send({ msg: result.array() });
@@ -51,7 +56,11 @@ router.put(
     checkSchema(newTIN),
     async (request, response) => {
         // body: data.ssn
-        if (!request.user) return response.sendStatus(401);
+        if (
+            !request.user ||
+            request.session.passport.user.type !== "tax authority"
+        )
+            return response.sendStatus(401);
         const result = validationResult(request);
         if (!result.isEmpty())
             return response.status(401).send({ msg: result.array() });

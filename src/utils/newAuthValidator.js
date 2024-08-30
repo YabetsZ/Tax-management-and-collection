@@ -1,5 +1,5 @@
 export const newAuthValidator = {
-    SSN: {
+    ssn: {
         notEmpty: {
             errorMessage: "ssn is required!",
         },
@@ -17,10 +17,10 @@ export const newAuthValidator = {
     },
     email: {
         notEmpty: {
-            errorMessage: "name is required!",
+            errorMessage: "email is required!",
         },
         isEmail: {
-            errorMessage: "name should be an email",
+            errorMessage: "email should be an email",
         },
     },
     password: {
@@ -37,11 +37,6 @@ export const newAuthValidator = {
         },
         isString: {
             errorMessage: "phone should be a string",
-        },
-        isMobilePhone: {
-            locale: "am-ET",
-            options: { strictMode: true }, //false: 555-123-4567
-            errorMessage: "should be in (555)-123-4567 or +251-933-445-332",
         },
     },
     jurisdiction: {
